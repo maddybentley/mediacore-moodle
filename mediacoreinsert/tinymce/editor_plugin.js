@@ -2,6 +2,8 @@
  * @author MediaCore <info@mediacore.com>
  */
 
+// TODO: Handle errors nicely if the chooser couldn't be loaded
+
 (function() {
     // Load chooser
     // FIXME: use some site config for the url
@@ -16,17 +18,14 @@
             var t = this;
             t.editor = ed;
             t.url = pluginUrl;
-            t.chooser = null;
 
             // Register commands.
             ed.addCommand('mceMediaCoreInsert', function() {
                 if (!t.chooser) {
                     t.chooser = mediacore.chooser.init();
                     t.chooser.on('media', function(media) {
-                        console.log("Got media", media);
                         var el = t.editor.dom.createHTML('a', {href : media.url}, media.title);
-                        var out = t.editor.execCommand('mceInsertContent', false, el);
-                        console.log("out", el, out);
+                        t.editor.execCommand('mceInsertContent', false, el);
                     });
                     t.chooser.on('error', function(err) {
                         throw err;
@@ -37,9 +36,9 @@
 
             // Register buttons.
             ed.addButton('mediacoreinsert', {
-                    title : 'mediacoreinsert.desc',
-                    image : t.url + '/img/icon.png',
-                    cmd : 'mceMediaCoreInsert'});
+                title : 'mediacoreinsert.desc',
+                image : t.url + '/img/icon.png',
+                cmd : 'mceMediaCoreInsert'});
 
         },
 
